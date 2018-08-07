@@ -8,7 +8,7 @@ import voluptuous as vol
 
 from homeassistant.components.climate import (
     PRECISION_TENTHS, STATE_COOL, STATE_HEAT, STATE_IDLE,
-    ClimateDevice, PLATFORM_SCHEMA)
+    ClimateDevice, PLATFORM_SCHEMA, SUPPORT_TARGET_TEMPERATURE)
 from homeassistant.const import (
     CONF_HOST, CONF_PASSWORD, CONF_USERNAME, TEMP_FAHRENHEIT, ATTR_TEMPERATURE)
 import homeassistant.helpers.config_validation as cv
@@ -45,6 +45,11 @@ class ProliphixThermostat(ClimateDevice):
         self._pdp = pdp
         self._pdp.update()
         self._name = self._pdp.name
+
+    @property
+    def supported_features(self):
+        """Return the list of supported features."""
+        return SUPPORT_TARGET_TEMPERATURE
 
     @property
     def should_poll(self):
@@ -97,9 +102,9 @@ class ProliphixThermostat(ClimateDevice):
         state = self._pdp.hvac_state
         if state in (1, 2):
             return STATE_IDLE
-        elif state == 3:
+        if state == 3:
             return STATE_HEAT
-        elif state == 6:
+        if state == 6:
             return STATE_COOL
 
     def set_temperature(self, **kwargs):

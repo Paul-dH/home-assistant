@@ -79,7 +79,7 @@ class Dovado:
 
         def send_sms(service):
             """Send SMS through the router."""
-            number = service.data.get('number'),
+            number = service.data.get('number')
             message = service.data.get('message')
             _LOGGER.debug("message for %s: %s", number, message)
             self._dovado.send_sms(number, message)
@@ -129,17 +129,16 @@ class DovadoSensor(Entity):
         if self._sensor == SENSOR_NETWORK:
             match = re.search(r"\((.+)\)", state)
             return match.group(1) if match else None
-        elif self._sensor == SENSOR_SIGNAL:
+        if self._sensor == SENSOR_SIGNAL:
             try:
                 return int(state.split()[0])
             except ValueError:
                 return 0
-        elif self._sensor == SENSOR_SMS_UNREAD:
+        if self._sensor == SENSOR_SMS_UNREAD:
             return int(state)
-        elif self._sensor in [SENSOR_UPLOAD, SENSOR_DOWNLOAD]:
+        if self._sensor in [SENSOR_UPLOAD, SENSOR_DOWNLOAD]:
             return round(float(state) / 1e6, 1)
-        else:
-            return state
+        return state
 
     def update(self):
         """Update sensor values."""

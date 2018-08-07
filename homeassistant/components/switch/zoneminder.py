@@ -10,7 +10,7 @@ import voluptuous as vol
 
 from homeassistant.components.switch import (SwitchDevice, PLATFORM_SCHEMA)
 from homeassistant.const import (CONF_COMMAND_ON, CONF_COMMAND_OFF)
-import homeassistant.components.zoneminder as zoneminder
+from homeassistant.components import zoneminder
 import homeassistant.helpers.config_validation as cv
 
 _LOGGER = logging.getLogger(__name__)
@@ -75,14 +75,14 @@ class ZMSwitchMonitors(SwitchDevice):
         """Return True if entity is on."""
         return self._state
 
-    def turn_on(self):
+    def turn_on(self, **kwargs):
         """Turn the entity on."""
         zoneminder.change_state(
             'api/monitors/%i.json' % self._monitor_id,
             {'Monitor[Function]': self._on_state}
         )
 
-    def turn_off(self):
+    def turn_off(self, **kwargs):
         """Turn the entity off."""
         zoneminder.change_state(
             'api/monitors/%i.json' % self._monitor_id,

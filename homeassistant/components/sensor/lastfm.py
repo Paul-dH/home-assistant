@@ -9,11 +9,11 @@ import re
 import voluptuous as vol
 
 from homeassistant.components.sensor import PLATFORM_SCHEMA
-from homeassistant.helpers.entity import Entity
 from homeassistant.const import CONF_API_KEY
 import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers.entity import Entity
 
-REQUIREMENTS = ['pylast==1.8.0']
+REQUIREMENTS = ['pylast==2.3.0']
 
 ATTR_LAST_PLAYED = 'last_played'
 ATTR_PLAY_COUNT = 'play_count'
@@ -25,12 +25,10 @@ ICON = 'mdi:lastfm'
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_API_KEY): cv.string,
-    vol.Required(CONF_USERS, default=[]):
-        vol.All(cv.ensure_list, [cv.string]),
+    vol.Required(CONF_USERS, default=[]): vol.All(cv.ensure_list, [cv.string]),
 })
 
 
-# pylint: disable=unused-argument
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up the Last.fm platform."""
     import pylast as lastfm
@@ -38,8 +36,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     add_devices(
         [LastfmSensor(
-            username, network) for username in config.get(CONF_USERS)]
-    )
+            username, network) for username in config.get(CONF_USERS)], True)
 
 
 class LastfmSensor(Entity):
@@ -55,7 +52,6 @@ class LastfmSensor(Entity):
         self._lastplayed = None
         self._topplayed = None
         self._cover = None
-        self.update()
 
     @property
     def name(self):
@@ -72,7 +68,6 @@ class LastfmSensor(Entity):
         """Return the state of the sensor."""
         return self._state
 
-    # pylint: disable=no-member
     def update(self):
         """Update device state."""
         self._cover = self._user.get_image()

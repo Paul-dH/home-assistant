@@ -54,8 +54,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         sensors.append(CurrencylayerSensor(rest, base, variable))
     if 'error' in response.json():
         return False
-    else:
-        add_devices(sensors, True)
+    add_devices(sensors, True)
 
 
 class CurrencylayerSensor(Entity):
@@ -69,9 +68,14 @@ class CurrencylayerSensor(Entity):
         self._state = None
 
     @property
+    def unit_of_measurement(self):
+        """Return the unit of measurement of this entity, if any."""
+        return self._quote
+
+    @property
     def name(self):
         """Return the name of the sensor."""
-        return '{} {}'.format(self._base, self._quote)
+        return self._base
 
     @property
     def icon(self):
@@ -99,7 +103,7 @@ class CurrencylayerSensor(Entity):
                 value['{}{}'.format(self._base, self._quote)], 4)
 
 
-class CurrencylayerData(object):
+class CurrencylayerData:
     """Get data from Currencylayer.org."""
 
     def __init__(self, resource, parameters):

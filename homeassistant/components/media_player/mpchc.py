@@ -35,13 +35,15 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 })
 
 
-# pylint: disable=unused-argument
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up the MPC-HC platform."""
     name = config.get(CONF_NAME)
-    url = '{}:{}'.format(config.get(CONF_HOST), config.get(CONF_PORT))
+    host = config.get(CONF_HOST)
+    port = config.get(CONF_PORT)
 
-    add_devices([MpcHcDevice(name, url)])
+    url = '{}:{}'.format(host, port)
+
+    add_devices([MpcHcDevice(name, url)], True)
 
 
 class MpcHcDevice(MediaPlayerDevice):
@@ -51,21 +53,17 @@ class MpcHcDevice(MediaPlayerDevice):
         """Initialize the MPC-HC device."""
         self._name = name
         self._url = url
-
-        self.update()
+        self._player_variables = dict()
 
     def update(self):
         """Get the latest details."""
-        self._player_variables = dict()
-
         try:
             response = requests.get(
                 '{}/variables.html'.format(self._url), data=None, timeout=3)
 
-            mpchc_variables = re.findall(r'<p id="(.+?)">(.+?)</p>',
-                                         response.text)
+            mpchc_variables = re.findall(
+                r'<p id="(.+?)">(.+?)</p>', response.text)
 
-            self._player_variables = dict()
             for var in mpchc_variables:
                 self._player_variables[var[0]] = var[1].lower()
         except requests.exceptions.RequestException:
@@ -95,10 +93,10 @@ class MpcHcDevice(MediaPlayerDevice):
             return STATE_OFF
         if state == 'playing':
             return STATE_PLAYING
-        elif state == 'paused':
+        if state == 'paused':
             return STATE_PAUSED
-        else:
-            return STATE_IDLE
+
+        return STATE_IDLE
 
     @property
     def media_title(self):
@@ -156,8 +154,8 @@ class MpcHcDevice(MediaPlayerDevice):
 
     def media_next_track(self):
         """Send next track command."""
-        self._send_command(921)
+        self._send_command(920)
 
     def media_previous_track(self):
         """Send previous track command."""
-        self._send_command(920)
+        self._send_command(919)

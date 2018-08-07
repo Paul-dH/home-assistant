@@ -10,7 +10,7 @@ import math
 import voluptuous as vol
 
 from homeassistant.components.sensor import PLATFORM_SCHEMA
-import homeassistant.util as util
+from homeassistant import util
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import track_state_change
 from homeassistant.const import (
@@ -19,8 +19,8 @@ import homeassistant.helpers.config_validation as cv
 
 _LOGGER = logging.getLogger(__name__)
 
-ATTR_CRITICAL_TEMP = 'Est. Crit. Temp'
-ATTR_DEWPOINT = 'Dewpoint'
+ATTR_CRITICAL_TEMP = 'estimated_critical_temp'
+ATTR_DEWPOINT = 'dewpoint'
 
 CONF_CALIBRATION_FACTOR = 'calibration_factor'
 CONF_INDOOR_HUMIDITY = 'indoor_humidity_sensor'
@@ -41,7 +41,6 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 })
 
 
-# pylint: disable=unused-argument
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up MoldIndicator sensor."""
     name = config.get(CONF_NAME, DEFAULT_NAME)
@@ -108,11 +107,10 @@ class MoldIndicator(Entity):
         # convert to celsius if necessary
         if unit == TEMP_FAHRENHEIT:
             return util.temperature.fahrenheit_to_celsius(temp)
-        elif unit == TEMP_CELSIUS:
+        if unit == TEMP_CELSIUS:
             return temp
-        else:
-            _LOGGER.error("Temp sensor has unsupported unit: %s (allowed: %s, "
-                          "%s)", unit, TEMP_CELSIUS, TEMP_FAHRENHEIT)
+        _LOGGER.error("Temp sensor has unsupported unit: %s (allowed: %s, "
+                      "%s)", unit, TEMP_CELSIUS, TEMP_FAHRENHEIT)
 
         return None
 
@@ -174,7 +172,7 @@ class MoldIndicator(Entity):
             self._dewpoint = \
                 MAGNUS_K3 * (alpha + math.log(self._indoor_hum / 100.0)) / \
                 (beta - math.log(self._indoor_hum / 100.0))
-        _LOGGER.debug("Dewpoint: %f " + TEMP_CELSIUS, self._dewpoint)
+        _LOGGER.debug("Dewpoint: %f %s", self._dewpoint, TEMP_CELSIUS)
 
     def _calc_moldindicator(self):
         """Calculate the humidity at the (cold) calibration point."""
@@ -192,8 +190,8 @@ class MoldIndicator(Entity):
             self._outdoor_temp + (self._indoor_temp - self._outdoor_temp) / \
             self._calib_factor
 
-        _LOGGER.debug("Estimated Critical Temperature: %f " +
-                      TEMP_CELSIUS, self._crit_temp)
+        _LOGGER.debug("Estimated Critical Temperature: %f %s",
+                      self._crit_temp, TEMP_CELSIUS)
 
         # Then calculate the humidity at this point
         alpha = MAGNUS_K2 * self._crit_temp / (MAGNUS_K3 + self._crit_temp)
@@ -242,10 +240,9 @@ class MoldIndicator(Entity):
                 ATTR_DEWPOINT: self._dewpoint,
                 ATTR_CRITICAL_TEMP: self._crit_temp,
             }
-        else:
-            return {
-                ATTR_DEWPOINT:
-                    util.temperature.celsius_to_fahrenheit(self._dewpoint),
-                ATTR_CRITICAL_TEMP:
-                    util.temperature.celsius_to_fahrenheit(self._crit_temp),
-            }
+        return {
+            ATTR_DEWPOINT:
+                util.temperature.celsius_to_fahrenheit(self._dewpoint),
+            ATTR_CRITICAL_TEMP:
+                util.temperature.celsius_to_fahrenheit(self._crit_temp),
+        }

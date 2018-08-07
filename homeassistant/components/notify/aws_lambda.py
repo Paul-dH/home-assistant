@@ -17,7 +17,7 @@ from homeassistant.components.notify import (
 import homeassistant.helpers.config_validation as cv
 from homeassistant.remote import JSONEncoder
 
-REQUIREMENTS = ['boto3==1.4.3']
+REQUIREMENTS = ['boto3==1.4.7']
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -44,7 +44,6 @@ def get_service(hass, config, discovery_info=None):
     context_b64 = base64.b64encode(context_str.encode('utf-8'))
     context = context_b64.decode('utf-8')
 
-    # pylint: disable=import-error
     import boto3
 
     aws_config = config.copy()

@@ -12,7 +12,7 @@ from tests.common import (
     get_test_home_assistant, get_test_instance_port, assert_setup_component)
 
 
-class TestSetupImageProcessing(object):
+class TestSetupImageProcessing:
     """Test class for setup image processing."""
 
     def setup_method(self):
@@ -24,7 +24,7 @@ class TestSetupImageProcessing(object):
         self.hass.stop()
 
     def test_setup_component(self):
-        """Setup demo platfrom on image_process component."""
+        """Setup demo platform on image_process component."""
         config = {
             ip.DOMAIN: {
                 'platform': 'demo'
@@ -35,7 +35,7 @@ class TestSetupImageProcessing(object):
             setup_component(self.hass, ip.DOMAIN, config)
 
     def test_setup_component_with_service(self):
-        """Setup demo platfrom on image_process component test service."""
+        """Setup demo platform on image_process component test service."""
         config = {
             ip.DOMAIN: {
                 'platform': 'demo'
@@ -48,7 +48,7 @@ class TestSetupImageProcessing(object):
         assert self.hass.services.has_service(ip.DOMAIN, 'scan')
 
 
-class TestImageProcessing(object):
+class TestImageProcessing:
     """Test class for image processing."""
 
     def setup_method(self):
@@ -82,7 +82,7 @@ class TestImageProcessing(object):
     @patch('homeassistant.components.camera.demo.DemoCamera.camera_image',
            autospec=True, return_value=b'Test')
     def test_get_image_from_camera(self, mock_camera):
-        """Grab a image from camera entity."""
+        """Grab an image from camera entity."""
         self.hass.start()
 
         ip.scan(self.hass, entity_id='image_processing.test')
@@ -109,7 +109,7 @@ class TestImageProcessing(object):
         assert state.state == '0'
 
 
-class TestImageProcessingAlpr(object):
+class TestImageProcessingAlpr:
     """Test class for alpr image processing."""
 
     def setup_method(self):
@@ -211,7 +211,7 @@ class TestImageProcessingAlpr(object):
         assert event_data[0]['entity_id'] == 'image_processing.demo_alpr'
 
 
-class TestImageProcessingFace(object):
+class TestImageProcessingFace:
     """Test class for face image processing."""
 
     def setup_method(self):
@@ -275,7 +275,7 @@ class TestImageProcessingFace(object):
     @patch('homeassistant.components.image_processing.demo.'
            'DemoImageProcessingFace.confidence',
            new_callable=PropertyMock(return_value=None))
-    def test_face_event_call_no_confidence(self, mock_confi, aioclient_mock):
+    def test_face_event_call_no_confidence(self, mock_config, aioclient_mock):
         """Setup and scan a picture and test faces from event."""
         aioclient_mock.get(self.url, content=b'image')
 

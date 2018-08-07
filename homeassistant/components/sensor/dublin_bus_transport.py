@@ -125,7 +125,7 @@ class DublinPublicTransportSensor(Entity):
             pass
 
 
-class PublicTransportData(object):
+class PublicTransportData:
     """The Class for handling the data retrieval."""
 
     def __init__(self, stop, route):
@@ -141,7 +141,7 @@ class PublicTransportData(object):
         params = {}
         params['stopid'] = self.stop
 
-        if len(self.route) > 0:
+        if self.route:
             params['routeid'] = self.route
 
         params['maxresults'] = 2

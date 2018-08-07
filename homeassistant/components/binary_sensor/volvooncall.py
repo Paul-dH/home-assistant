@@ -28,12 +28,11 @@ class VolvoSensor(VolvoEntity, BinarySensorDevice):
         val = getattr(self.vehicle, self._attribute)
         if self._attribute == 'bulb_failures':
             return bool(val)
-        elif self._attribute in ['doors', 'windows']:
+        if self._attribute in ['doors', 'windows']:
             return any([val[key] for key in val if 'Open' in key])
-        else:
-            return val != 'Normal'
+        return val != 'Normal'
 
     @property
     def device_class(self):
-        """Return the class of this sensor, from SENSOR_CLASSES."""
+        """Return the class of this sensor, from DEVICE_CLASSES."""
         return 'safety'

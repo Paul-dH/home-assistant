@@ -46,7 +46,6 @@ def convert_pid(value):
     return int(value, 16)
 
 
-# pylint: disable=unused-argument
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up the Torque platform."""
     vehicle = config.get(CONF_NAME)
@@ -141,4 +140,4 @@ class TorqueSensor(Entity):
     def async_on_update(self, value):
         """Receive an update."""
         self._state = value
-        self.hass.async_add_job(self.async_update_ha_state())
+        self.async_schedule_update_ha_state()

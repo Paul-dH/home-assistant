@@ -10,7 +10,7 @@ import logging
 
 import voluptuous as vol
 
-import homeassistant.components.arduino as arduino
+from homeassistant.components import arduino
 from homeassistant.components.switch import (SwitchDevice, PLATFORM_SCHEMA)
 from homeassistant.const import CONF_NAME
 import homeassistant.helpers.config_validation as cv
@@ -83,12 +83,12 @@ class ArduinoSwitch(SwitchDevice):
         """Return true if pin is high/on."""
         return self._state
 
-    def turn_on(self):
+    def turn_on(self, **kwargs):
         """Turn the pin to high/on."""
         self._state = True
         self.turn_on_handler(self._pin)
 
-    def turn_off(self):
+    def turn_off(self, **kwargs):
         """Turn the pin to low/off."""
         self._state = False
         self.turn_off_handler(self._pin)

@@ -275,8 +275,10 @@ class TestHoneywellRound(unittest.TestCase):
         self.device.temperatures.side_effect = fake_temperatures
         self.round1 = honeywell.RoundThermostat(self.device, '1',
                                                 True, 16)
+        self.round1.update()
         self.round2 = honeywell.RoundThermostat(self.device, '2',
                                                 False, 17)
+        self.round2.update()
 
     def test_attributes(self):
         """Test the attributes."""
@@ -318,7 +320,7 @@ class TestHoneywellRound(unittest.TestCase):
             self.device.set_temperature.call_args, mock.call('House', 25)
         )
 
-    def test_set_operation_mode(self: unittest.TestCase) -> None:
+    def test_set_operation_mode(self) -> None:
         """Test setting the system operation."""
         self.round1.set_operation_mode('cool')
         self.assertEqual('cool', self.round1.current_operation)
@@ -382,7 +384,7 @@ class TestHoneywellUS(unittest.TestCase):
         self.assertEqual(74, self.device.setpoint_cool)
         self.assertEqual(74, self.honeywell.target_temperature)
 
-    def test_set_operation_mode(self: unittest.TestCase) -> None:
+    def test_set_operation_mode(self) -> None:
         """Test setting the operation mode."""
         self.honeywell.set_operation_mode('cool')
         self.assertEqual('cool', self.device.system_mode)

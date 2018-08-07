@@ -18,7 +18,7 @@ REQUIREMENTS = ['basicmodem==0.7']
 
 _LOGGER = logging.getLogger(__name__)
 DEFAULT_NAME = 'Modem CallerID'
-ICON = 'mdi:phone-clasic'
+ICON = 'mdi:phone-classic'
 DEFAULT_DEVICE = '/dev/ttyACM0'
 
 STATE_RING = 'ring'
@@ -95,7 +95,6 @@ class ModemCalleridSensor(Entity):
         if self.modem:
             self.modem.close()
             self.modem = None
-        return
 
     def _incomingcallcallback(self, newstate):
         """Handle new states."""
@@ -117,4 +116,3 @@ class ModemCalleridSensor(Entity):
         elif newstate == self.modem.STATE_IDLE:
             self._state = STATE_IDLE
             self.schedule_update_ha_state()
-        return

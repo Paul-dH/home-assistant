@@ -39,7 +39,6 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 })
 
 
-# pylint: disable=unused-variable
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up mFi sensors."""
     host = config.get(CONF_HOST)
@@ -47,7 +46,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     password = config.get(CONF_PASSWORD)
     use_tls = config.get(CONF_SSL)
     verify_tls = config.get(CONF_VERIFY_SSL)
-    default_port = use_tls and 6443 or 6080
+    default_port = 6443 if use_tls else 6080
     port = int(config.get(CONF_PORT, default_port))
 
     from mficlient.client import FailedToLogin, MFiClient
@@ -100,12 +99,12 @@ class MfiSwitch(SwitchDevice):
             self._port.data['output'] = float(self._target_state)
             self._target_state = None
 
-    def turn_on(self):
+    def turn_on(self, **kwargs):
         """Turn the switch on."""
         self._port.control(True)
         self._target_state = True
 
-    def turn_off(self):
+    def turn_off(self, **kwargs):
         """Turn the switch off."""
         self._port.control(False)
         self._target_state = False

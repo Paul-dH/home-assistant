@@ -8,7 +8,7 @@ import logging
 
 import voluptuous as vol
 
-import homeassistant.components.scsgate as scsgate
+from homeassistant.components import scsgate
 from homeassistant.components.switch import (SwitchDevice, PLATFORM_SCHEMA)
 from homeassistant.const import (
     ATTR_ENTITY_ID, ATTR_STATE, CONF_NAME, CONF_DEVICES)
@@ -22,8 +22,6 @@ CONF_TRADITIONAL = 'traditional'
 CONF_SCENARIO = 'scenario'
 
 CONF_SCS_ID = 'scs_id'
-
-DOMAIN = 'scsgate'
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_DEVICES): vol.Schema({cv.slug: scsgate.SCSGATE_SCHEMA}),
@@ -154,10 +152,10 @@ class SCSGateSwitch(SwitchDevice):
         )
 
 
-class SCSGateScenarioSwitch(object):
+class SCSGateScenarioSwitch:
     """Provides a SCSGate scenario switch.
 
-    This switch is always in a 'off" state, when toggled it's used to trigger
+    This switch is always in an 'off" state, when toggled it's used to trigger
     events.
     """
 

@@ -44,12 +44,16 @@ class TestRingBinarySensorSetup(unittest.TestCase):
     @requests_mock.Mocker()
     def test_binary_sensor(self, mock):
         """Test the Ring sensor class and methods."""
+        mock.post('https://oauth.ring.com/oauth/token',
+                  text=load_fixture('ring_oauth.json'))
         mock.post('https://api.ring.com/clients_api/session',
                   text=load_fixture('ring_session.json'))
         mock.get('https://api.ring.com/clients_api/ring_devices',
                  text=load_fixture('ring_devices.json'))
         mock.get('https://api.ring.com/clients_api/dings/active',
                  text=load_fixture('ring_ding_active.json'))
+        mock.get('https://api.ring.com/clients_api/doorbots/987652/health',
+                 text=load_fixture('ring_doorboot_health_attrs.json'))
 
         base_ring.setup(self.hass, VALID_CONFIG)
         ring.setup_platform(self.hass,
